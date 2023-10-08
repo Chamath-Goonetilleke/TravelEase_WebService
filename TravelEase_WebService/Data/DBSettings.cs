@@ -6,6 +6,6 @@ namespace TavelEase_WebService.Data
         public string DatabaseName { get; set; } = string.Empty;
         public string BackOfficeUserCollectionName { get; set; } = string.Empty;
         public string TravelAgentCollectionName { get; set; } = string.Empty;
-        public string TravellerCollectionName { get; set; } = string.Empty;
+        public string TravelerCollectionName { get; set; } = string.Empty;
     }
 }

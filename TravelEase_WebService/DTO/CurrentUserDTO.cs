@@ -14,9 +14,11 @@ namespace TravelEase_WebService.DTO
         public string? PhoneNumber { get; set; }
         public string? EmployeeId { get; set; }
         public string? TravelAgentId { get; set; }
+        public string? ImageUrl { get; set; }
+        public string? City { get; set; }
 
 
-        public void MapUser(Models.User user, string role, string workId)
+        public void MapUser(Models.User user, string role, string? workId = null, string? city = null)
         {
             Role = user.Role;
             Title = user.Title;
@@ -25,6 +27,8 @@ namespace TravelEase_WebService.DTO
             Nic = user.Nic;
             Email = user.Email;
             PhoneNumber = user.PhoneNumber;
+            ImageUrl = user.ImageUrl;
+
 
             if (role == "TravelAgent")
             {
@@ -34,9 +38,13 @@ namespace TravelEase_WebService.DTO
             {
                 EmployeeId = workId;
             }
+            else if (role == "Traveler")
+            {
+                City = city;
+            }
 
-            
-            
+
+
 
 
         }

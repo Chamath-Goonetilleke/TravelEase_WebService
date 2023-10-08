@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using TravelEase_WebService.DTO;
 using TravelEase_WebService.Services;
 
 namespace TravelEase_WebService.Controllers
 {
 
     [ApiController]
+    [Route("/api/v1/user")]
     public class UserController : ControllerBase
     {
 
@@ -20,7 +21,7 @@ namespace TravelEase_WebService.Controllers
         [Route("auth")]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult> Auth(DTO.AuthUserDTO authUser)
+        public async Task<ActionResult> Auth(AuthUserDTO authUser)
         {
             try
             {
@@ -28,7 +29,7 @@ namespace TravelEase_WebService.Controllers
 
                 CookieOptions cookieOptions = new()
                 {
-                    Expires = DateTime.Now.AddDays(7)
+                    Expires = DateTime.Now.AddDays(7),
                 };
 
                 HttpContext.Response.Cookies.Append("token", token, cookieOptions);
@@ -37,20 +38,40 @@ namespace TravelEase_WebService.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest("Error: " + e);
+                return BadRequest("Error: " + e.Message);
             }
         }
 
         [Route("register")]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<ActionResult> CreateNewUser(DTO.UserDTO userDTO)
+        public async Task<ActionResult> CreateNewUser(UserDTO userDTO)
         {
             try
             {
                 await userService.CreateUser(userDTO);
 
-                return Ok("Successfully Created");
+                return Ok("Successfully Registered");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Error: " + e.Message);
+            }
+        }
+
+        [Route("update")]
+        [Authorize]
+        [HttpPut]
+        public async Task<ActionResult> UpdateUser(UserDTO userDTO)
+        {
+            try
+            {
+                var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
+                Console.WriteLine(userId);
+
+                await userService.UpdateUser(userDTO, userId);
+
+                return Ok("Successfully Updated");
             }
             catch (Exception e)
             {
@@ -66,7 +87,10 @@ namespace TravelEase_WebService.Controllers
             try
             {
                 var userDataClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserData")?.Value;
-                var userData = JsonConvert.DeserializeObject<DTO.CurrentUserDTO>(userDataClaim);
+                var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
+                var userRole = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserRole")?.Value;
+
+                var userData = await userService.GetCurrentUser(userRole, userId);
 
                 return Ok(userData);
             }

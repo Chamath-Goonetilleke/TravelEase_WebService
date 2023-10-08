@@ -13,6 +13,7 @@
     <None Remove="Services\" />
     <None Remove="Controllers\" />
     <None Remove="DTO\" />
+    <None Remove="Utils\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
@@ -20,6 +21,7 @@
     <Folder Include="Services\" />
     <Folder Include="Controllers\" />
     <Folder Include="DTO\" />
+    <Folder Include="Utils\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver" Version="2.21.0" />

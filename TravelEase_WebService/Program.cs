@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TravelEase_WebService.Services;
 using TravelEase_WebService.Models;
+using TravelEase_WebService.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -42,8 +43,9 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddSingleton<UserService>();
-builder.Services.AddScoped<User>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<TravelerService>();
+builder.Services.AddScoped<PasswordEncryptionUtil>();
 
 var app = builder.Build();
 

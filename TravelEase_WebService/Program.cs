@@ -1,4 +1,6 @@
-﻿using TavelEase_WebService.Data;
+﻿using TravelEase_WebService.Data;
+using TravelEase_WebService.Services;
+using TavelEase_WebService.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -42,18 +44,33 @@ builder.Services.AddCors(options =>
               .AllowCredentials();
     });
 });
-
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddRazorPages();
+builder.Services.AddScoped<ITrainService, TrainService>();
+builder.Services.AddScoped<ITrainScheduleService, TrainScheduleService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TravelerService>();
 builder.Services.AddScoped<PasswordEncryptionUtil>();
 
 var app = builder.Build();
 
+
+
+//app.MapGet("/", () => "Hello World");
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseAuthentication();
+app.MapControllers();
 app.UseCors(myOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpsRedirection();
 
-app.MapControllers();
+app.MapControllers()
 app.Run();
 

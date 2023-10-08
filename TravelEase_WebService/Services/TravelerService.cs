@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using TavelEase_WebService.Data;
@@ -62,6 +63,32 @@ namespace TravelEase_WebService.Services
             }
 
             return travelersList;
+        }
+
+        public async Task UpdateTraveler(UserDTO userDTO)
+        {
+            var traveler = await _travelerCollection.Find(t => t.Nic == userDTO.Nic).
+                FirstOrDefaultAsync() ?? throw new Exception("No User Found.");
+
+            var filter = Builders<Traveler>.Filter.Eq(u => u.Nic, userDTO.Nic);
+            var update = Builders<Traveler>.Update
+                .Set(u => u.Title, userDTO.Title)
+                .Set(u => u.FirstName, userDTO.FirstName)
+                .Set(u => u.LastName, userDTO.LastName)
+                .Set(u => u.PhoneNumber, userDTO.PhoneNumber)
+                .Set(u => u.ImageUrl, userDTO.ImageUrl)
+                .Set(u => u.City, userDTO.City);
+
+            await _travelerCollection.UpdateOneAsync(filter, update);
+        }
+
+        public async Task DeleteTraveler(string nic)
+        {
+            var traveler = await _travelerCollection.Find(t => t.Nic == nic).
+                FirstOrDefaultAsync() ?? throw new Exception("No User Found.");
+
+            await _travelerCollection.DeleteOneAsync(t => t.Nic == nic);
+
         }
 
     }

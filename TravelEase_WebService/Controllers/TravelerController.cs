@@ -8,8 +8,8 @@ namespace TravelEase_WebService.Controllers
 {
     [ApiController]
     [Route("/api/v1/traveler")]
-    public class TravelerController:ControllerBase
-	{
+    public class TravelerController : ControllerBase
+    {
         private readonly TravelerService _travelerService;
 
         public TravelerController(TravelerService travelerService)
@@ -27,9 +27,9 @@ namespace TravelEase_WebService.Controllers
                 await _travelerService.CreateNewTraveler(userDTO);
                 return Ok("Successfully Created.");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                return BadRequest("Error : "+ e.Message);
+                return BadRequest("Error : " + e.Message);
             }
         }
 
@@ -48,7 +48,42 @@ namespace TravelEase_WebService.Controllers
                 return BadRequest("Error : " + e.Message);
             }
         }
-		
-	}
+
+        [Route("update")]
+        [Authorize]
+        [HttpPut]
+        public async Task<ActionResult> UpdateTraveler(UserDTO userDTO)
+        {
+            try
+            {
+                await _travelerService.UpdateTraveler(userDTO);
+                return Ok("Successfully Updated");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Error : " + e.Message);
+            }
+
+
+        }
+
+        [Route("delete/{nic}")]
+        [Authorize]
+        [HttpDelete]
+        public async Task<ActionResult> DeleteTraveler(string nic)
+        {
+            try
+            {
+                await _travelerService.DeleteTraveler(nic);
+                return Ok("Successfully Deleted");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Error : " + e.Message);
+            }
+
+
+        }
+    }
 }
 

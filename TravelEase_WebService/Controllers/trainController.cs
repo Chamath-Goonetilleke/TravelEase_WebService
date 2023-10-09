@@ -18,7 +18,8 @@ namespace TravelEase_WebService.Controllers
             _trainService = trainService;
         }
 
-        [HttpPost("/new-train")]
+        [Route("new-train")]
+        [HttpPost]
         public async Task<ActionResult<Trains>> PostTrain(Trains train)
         {
             var insertedTrain = await _trainService.InsertTrain(train);
@@ -27,7 +28,8 @@ namespace TravelEase_WebService.Controllers
 
 
         }
-        [HttpGet("/trains/{id}")]
+        [Route("trains/{id}")]
+        [HttpGet]
         public async Task<Trains> GetTrain(string id)
         {
             var train = await _trainService.GetTrainsById(id);
@@ -35,7 +37,8 @@ namespace TravelEase_WebService.Controllers
             // Return the train.
             return train;
         }
-        [HttpGet("/trains")]
+        [Route("trains")]
+        [HttpGet]
         public async Task<List<Trains>> GetAllTrains()
         {
             // Log a message to the console.

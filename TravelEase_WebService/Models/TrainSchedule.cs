@@ -6,15 +6,15 @@ namespace TravelEase_WebService.Models
 {
 	public class TrainSchedule
     {
-        //[BsonId]
-        //[BsonRepresentation(BsonType.ObjectId)]
-        //public string? Id { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
 
         [BsonElement("TrainNo")]
-        public int TrainNo { get; set; }
+        public int? TrainNo { get; set; }
 
         [BsonElement("WeekType")]
-        public string? WeekType { get; set; }
+        public List<string>? WeekType { get; set; }
 
         [BsonElement("StartStation")]
         public string? StartStation { get; set; }
@@ -30,6 +30,12 @@ namespace TravelEase_WebService.Models
 
         [BsonElement("Stations")]
         public List<TrainStation>? Stations { get; set; }
+
+        [BsonElement("Train")]
+        public Trains? Train { get; set; }
+
+        [BsonElement("Status")]
+        public int? Status { get; set; }
     }
 
     public class TrainStation
@@ -47,7 +53,10 @@ namespace TravelEase_WebService.Models
         public string? NewEndTime { get; set; }
 
         [BsonElement("Distance")]
-        public int Distance { get; set; }
+        public int? Distance { get; set; }
     }
 }
+
+
+//status(0-PUBLISHED, 1-UNPUBLISHED)
 

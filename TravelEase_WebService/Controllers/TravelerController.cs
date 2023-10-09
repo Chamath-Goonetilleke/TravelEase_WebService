@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TravelEase_WebService.DTO;
+using TravelEase_WebService.Models;
 using TravelEase_WebService.Services;
 
 namespace TravelEase_WebService.Controllers
@@ -11,10 +12,12 @@ namespace TravelEase_WebService.Controllers
     public class TravelerController : ControllerBase
     {
         private readonly TravelerService _travelerService;
+        private readonly TravelerAccountRequestService _requestService;
 
-        public TravelerController(TravelerService travelerService)
+        public TravelerController(TravelerService travelerService, TravelerAccountRequestService requestService)
         {
             _travelerService = travelerService;
+            _requestService = requestService;
         }
 
         [Route("register")]
@@ -25,6 +28,16 @@ namespace TravelEase_WebService.Controllers
             try
             {
                 await _travelerService.CreateNewTraveler(userDTO);
+
+                var request = new TravelerAccountRequest()
+                {
+                    TravelerNIC = userDTO.Nic,
+                    RequestType = 0,
+                    Time = DateTime.Now
+                };
+
+                await _requestService.CreateNewRequest(request);
+
                 return Ok("Successfully Created.");
             }
             catch (Exception e)
@@ -49,6 +62,23 @@ namespace TravelEase_WebService.Controllers
             }
         }
 
+        [Route("getTraveler/{nic}")]
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult> GetTravelerByNIC(string nic)
+        {
+            try
+            {
+                var travelr = await _travelerService.GetTravelerByNIC(nic);
+                return Ok(travelr);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Error : " + e.Message);
+            }
+        }
+
+
         [Route("update")]
         [Authorize]
         [HttpPut]
@@ -63,9 +93,40 @@ namespace TravelEase_WebService.Controllers
             {
                 return BadRequest("Error : " + e.Message);
             }
-
-
         }
+
+        [Route("activateAccount/{nic}")]
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult> ActivateTraveler(string nic)
+        {
+            try
+            {
+                await _travelerService.ActivateTravelerAccount(nic);
+                return Ok("Successfully Activated");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Error : " + e.Message);
+            }
+        }
+
+        [Route("deactivateAccount/{nic}")]
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult> DeactivateTraveler(string nic)
+        {
+            try
+            {
+                await _travelerService.DeactivateTravelerAccount(nic);
+                return Ok("Successfully Deactivated");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Error : " + e.Message);
+            }
+        }
+
 
         [Route("delete/{nic}")]
         [Authorize]
@@ -81,8 +142,6 @@ namespace TravelEase_WebService.Controllers
             {
                 return BadRequest("Error : " + e.Message);
             }
-
-
         }
     }
 }

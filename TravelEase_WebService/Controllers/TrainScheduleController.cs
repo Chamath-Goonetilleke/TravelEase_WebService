@@ -7,7 +7,7 @@ namespace TravelEase_WebService.Controllers
 {
     [Route("api/v1/schedule")]
     [ApiController]
-    public class TrainScheduleController
+    public class TrainScheduleController:ControllerBase
 	{
         private readonly ITrainScheduleService _iTrainScheduler;
         public TrainScheduleController(ITrainScheduleService iTrainScheduler)
@@ -19,13 +19,10 @@ namespace TravelEase_WebService.Controllers
         public async Task<ActionResult<TrainSchedule>> PostTrain(TrainSchedule train)
         {
             var insertedTrainSchedule = await _iTrainScheduler.InsertTrainSchedule(train);
-            return CreatedAtAction("GetTrain", new { id = insertedTrainSchedule.Id });
+            return insertedTrainSchedule;
         }
 
-        private ActionResult<TrainSchedule> CreatedAtAction(string v, object value)
-        {
-            throw new NotImplementedException();
-        }
+        
         [HttpGet("/schedules")]
         public async Task<List<TrainSchedule>> GetAllTrainSchedule()
         {

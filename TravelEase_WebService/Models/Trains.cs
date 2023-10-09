@@ -6,9 +6,9 @@ namespace TravelEase_WebService.Models
 {
 	public class Trains
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string? Id { get; set; }
+        //[BsonId]
+        //[BsonRepresentation(BsonType.ObjectId)]
+        //public string? Id { get; set; }
 
         [BsonElement("Name")]
         public string? Name { get; set; }

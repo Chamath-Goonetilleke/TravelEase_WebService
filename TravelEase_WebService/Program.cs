@@ -3,7 +3,6 @@ using TravelEase_WebService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using TravelEase_WebService.Services;
 using TravelEase_WebService.Models;
 using TravelEase_WebService.Utils;
 

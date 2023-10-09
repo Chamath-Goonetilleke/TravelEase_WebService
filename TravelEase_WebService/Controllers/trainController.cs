@@ -22,12 +22,10 @@ namespace TravelEase_WebService.Controllers
         public async Task<ActionResult<Trains>> PostTrain(Trains train)
         {
             var insertedTrain = await _trainService.InsertTrain(train);
-            return NewMethod(insertedTrain);
+            return insertedTrain;
 
-            CreatedAtActionResult NewMethod(Trains insertedTrain)
-            {
-                return CreatedAtAction("GetTrain", new { id = insertedTrain.Id }, insertedTrain);
-            }
+
+
         }
         [HttpGet("/trains/{id}")]
         public async Task<Trains> GetTrain(string id)

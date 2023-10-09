@@ -6,17 +6,17 @@ namespace TravelEase_WebService.Models
 {
 	public class TrainSchedule
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string? Id { get; set; }
+        //[BsonId]
+        //[BsonRepresentation(BsonType.ObjectId)]
+        //public string? Id { get; set; }
 
-        [BsonElement("trainNo")]
+        [BsonElement("TrainNo")]
         public int TrainNo { get; set; }
 
-        [BsonElement("weekType")]
+        [BsonElement("WeekType")]
         public string? WeekType { get; set; }
 
-        [BsonElement("startStation")]
+        [BsonElement("StartStation")]
         public string? StartStation { get; set; }
 
         [BsonElement("StartTime")]

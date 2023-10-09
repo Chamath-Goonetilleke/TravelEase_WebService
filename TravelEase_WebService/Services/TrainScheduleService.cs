@@ -14,7 +14,7 @@ namespace TravelEase_WebService.Services
             var mongoClient = new MongoClient(dbSetting.Value.ConnectionString);
             var mongoDatabase = mongoClient.GetDatabase(dbSetting.Value.DatabaseName);
 
-            _trainCollection = mongoDatabase.GetCollection<TrainSchedule>(dbSetting.Value.TrainCollectionName);
+            _trainCollection = mongoDatabase.GetCollection<TrainSchedule>(dbSetting.Value.TrainScheduleCollectionName);
         }
 
         public async Task<List<TrainSchedule>> GetAllTrainSchedule()

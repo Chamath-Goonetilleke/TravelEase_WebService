@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using TavelEase_WebService.Data;
+using TravelEase_WebService.Data;
 using TravelEase_WebService.DTO;
 using TravelEase_WebService.Models;
 using TravelEase_WebService.Utils;

@@ -1,11 +1,8 @@
 ﻿using TravelEase_WebService.Data;
 using TravelEase_WebService.Services;
-using TavelEase_WebService.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using TravelEase_WebService.Services;
-using TravelEase_WebService.Models;
 using TravelEase_WebService.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -71,6 +68,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpsRedirection();
 
-app.MapControllers()
+app.MapControllers();
 app.Run();
 

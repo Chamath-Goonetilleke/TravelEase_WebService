@@ -10,22 +10,22 @@ namespace TravelEase_WebService.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
 
-        [BsonElement("name")]
+        [BsonElement("Name")]
         public string? Name { get; set; }
 
-        [BsonElement("trainNo")]
+        [BsonElement("TrainNo")]
         public int TrainNo { get; set; }
 
-        [BsonElement("classes")]
+        [BsonElement("Classes")]
         public List<TrainClass>? Classes { get; set; }
     }
 
     public class TrainClass
     {
-        [BsonElement("className")]
+        [BsonElement("ClassName")]
         public string? ClassName { get; set; }
 
-        [BsonElement("seatCount")]
+        [BsonElement("SeatCount")]
         public int SeatCount { get; set; }
     }
 }

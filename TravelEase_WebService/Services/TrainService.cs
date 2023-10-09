@@ -22,6 +22,16 @@ namespace TravelEase_WebService.Services
             await _trainCollection.InsertOneAsync(train);
             return train;
         }
+
+        public async Task<List<Trains>> GetAllTrains()
+        {
+            return await _trainCollection.Find(_ => true).ToListAsync();
+        }
+
+        public async Task<Trains> GetTrainsById(string id)
+        {
+            return await _trainCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+        }
     }
 }
 

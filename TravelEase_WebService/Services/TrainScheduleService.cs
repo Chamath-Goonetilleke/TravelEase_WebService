@@ -17,6 +17,12 @@ namespace TravelEase_WebService.Services
             _trainCollection = mongoDatabase.GetCollection<TrainSchedule>(dbSetting.Value.TrainCollectionName);
         }
 
+        public async Task<List<TrainSchedule>> GetAllTrainSchedule()
+        {
+            return await _trainCollection.Find(_ => true).ToListAsync();
+
+        }
+
         async Task<TrainSchedule> ITrainScheduleService.InsertTrainSchedule(TrainSchedule train)
         {
             await _trainCollection.InsertOneAsync(train);

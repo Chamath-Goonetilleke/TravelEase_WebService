@@ -7,7 +7,7 @@ using TravelEase_WebService.Services;
 
 namespace TravelEase_WebService.Controllers
 {
-    [Route("api/train")]
+    [Route("api/v1/train")]
     [ApiController]
     public class TrainController : ControllerBase
     {
@@ -29,19 +29,25 @@ namespace TravelEase_WebService.Controllers
                 return CreatedAtAction("GetTrain", new { id = insertedTrain.Id }, insertedTrain);
             }
         }
-        [HttpGet("api/trains/{id}")]
-        public Task<ActionResult<String>> GetTrain(string id)
+        [HttpGet("/trains/{id}")]
+        public async Task<Trains> GetTrain(string id)
         {
-            Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            // Log a message to the console.
-            Console.WriteLine($"Getting train with ID {id}.");
-
-            // Get the train from the database.
-            //var train = await _trainService.GetTrain(id);
+            var train = await _trainService.GetTrainsById(id);
 
             // Return the train.
-            return Task.FromResult<ActionResult<string>>("success");
+            return train;
+        }
+        [HttpGet("/trains")]
+        public async Task<List<Trains>> GetAllTrains()
+        {
+            // Log a message to the console.
+            Console.WriteLine($"Getting train with ID");
+
+            // Get the train from the database.
+            var train = await _trainService.GetAllTrains();
+
+            // Return the train.
+            return train;
         }
     }
 }

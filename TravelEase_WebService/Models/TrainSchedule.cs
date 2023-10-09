@@ -19,34 +19,34 @@ namespace TravelEase_WebService.Models
         [BsonElement("startStation")]
         public string? StartStation { get; set; }
 
-        [BsonElement("startTime")]
+        [BsonElement("StartTime")]
         public string? StartTime { get; set; }
 
-        [BsonElement("endStation")]
+        [BsonElement("EndStation")]
         public string? EndStation { get; set; }
 
-        [BsonElement("endTime")]
+        [BsonElement("EndTime")]
         public string? EndTime { get; set; }
 
-        [BsonElement("stations")]
+        [BsonElement("Stations")]
         public List<TrainStation>? Stations { get; set; }
     }
 
     public class TrainStation
     {
-        [BsonElement("newStartStation")]
+        [BsonElement("NewStartStation")]
         public string? NewStartStation { get; set; }
 
-        [BsonElement("newEndStation")]
+        [BsonElement("NewEndStation")]
         public string? NewEndStation { get; set; }
 
-        [BsonElement("newStartTime")]
+        [BsonElement("NewStartTime")]
         public string? NewStartTime { get; set; }
 
-        [BsonElement("newEndTime")]
+        [BsonElement("NewEndTime")]
         public string? NewEndTime { get; set; }
 
-        [BsonElement("distance")]
+        [BsonElement("Distance")]
         public int Distance { get; set; }
     }
 }

@@ -5,6 +5,8 @@ namespace TravelEase_WebService.Services
 {
 	public interface ITrainService
 	{
+        Task<List<Trains>> GetAllTrains();
+        Task<Trains> GetTrainsById(string id);
         Task<Trains> InsertTrain(Trains train);
 
     }

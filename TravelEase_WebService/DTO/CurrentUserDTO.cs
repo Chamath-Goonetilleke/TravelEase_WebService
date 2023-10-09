@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using static TravelEase_WebService.Models.Traveler;
 
 namespace TravelEase_WebService.DTO
 {
@@ -16,9 +17,10 @@ namespace TravelEase_WebService.DTO
         public string? TravelAgentId { get; set; }
         public string? ImageUrl { get; set; }
         public string? City { get; set; }
+        public TravelerAccountState? State { get; set; }
 
 
-        public void MapUser(Models.User user, string role, string? workId = null, string? city = null)
+        public void MapUser(Models.User user, string role, string? workId = null, string? city = null, TravelerAccountState? state = null)
         {
             Role = user.Role;
             Title = user.Title;
@@ -41,6 +43,7 @@ namespace TravelEase_WebService.DTO
             else if (role == "Traveler")
             {
                 City = city;
+                State = state;
             }
 
 

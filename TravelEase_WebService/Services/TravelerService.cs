@@ -27,7 +27,8 @@ namespace TravelEase_WebService.Services
 
         public async Task CreateNewTraveler(UserDTO userDTO)
         {
-            var traveler = await _travelerCollection.Find(t => t.Email == userDTO.Email || t.Nic == userDTO.Nic).FirstOrDefaultAsync();
+            var traveler = await _travelerCollection.Find(t => t.Email == userDTO.Email
+                                     || t.Nic == userDTO.Nic).FirstOrDefaultAsync();
             if(traveler != null)
             {
                 throw new Exception("User already registered.");
@@ -44,7 +45,9 @@ namespace TravelEase_WebService.Services
                 PhoneNumber = userDTO.PhoneNumber,
                 Password = _passwordEncryptionUtil.HashPassword(userDTO.Password),
                 ImageUrl = userDTO.ImageUrl,
-                City = userDTO.City
+                City = userDTO.City,
+                State = Traveler.TravelerAccountState.INACTIVE
+                
             };
 
             await _travelerCollection.InsertOneAsync(newTravelr);
@@ -58,11 +61,22 @@ namespace TravelEase_WebService.Services
             foreach (var traveler in travelers)
             {
                 var t1 = new CurrentUserDTO();
-                t1.MapUser(traveler, "Traveler",null,traveler.City);
+                t1.MapUser(traveler, "Traveler",null,traveler.City, traveler.State);
                 travelersList.Add(t1);
             }
 
             return travelersList;
+        }
+
+        public async Task<CurrentUserDTO> GetTravelerByNIC(string nic)
+        {
+            var traveler = await _travelerCollection.Find(t => t.Nic == nic).
+                FirstOrDefaultAsync() ?? throw new Exception("No User Found.");
+
+            var t1 = new CurrentUserDTO();
+            t1.MapUser(traveler, "Traveler", null, traveler.City, traveler.State);
+
+            return t1;
         }
 
         public async Task UpdateTraveler(UserDTO userDTO)
@@ -81,6 +95,32 @@ namespace TravelEase_WebService.Services
 
             await _travelerCollection.UpdateOneAsync(filter, update);
         }
+
+        public async Task ActivateTravelerAccount(string nic)
+        {
+            var traveler = await _travelerCollection.Find(t => t.Nic == nic).
+                FirstOrDefaultAsync() ?? throw new Exception("No User Found.");
+
+            var filter = Builders<Traveler>.Filter.Eq(u => u.Nic, nic);
+            var update = Builders<Traveler>.Update
+                .Set(t => t.State, Traveler.TravelerAccountState.ACTIVE);
+
+            await _travelerCollection.UpdateOneAsync(filter, update);
+        }
+
+        public async Task DeactivateTravelerAccount(string nic)
+        {
+            var traveler = await _travelerCollection.Find(t => t.Nic == nic).
+                FirstOrDefaultAsync() ?? throw new Exception("No User Found.");
+
+            var filter = Builders<Traveler>.Filter.Eq(u => u.Nic, nic);
+            var update = Builders<Traveler>.Update
+                .Set(t => t.State, Traveler.TravelerAccountState.INACTIVE);
+
+            await _travelerCollection.UpdateOneAsync(filter, update);
+        }
+
+
 
         public async Task DeleteTraveler(string nic)
         {

@@ -67,7 +67,6 @@ namespace TravelEase_WebService.Controllers
             try
             {
                 var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
-                Console.WriteLine(userId);
 
                 await userService.UpdateUser(userDTO, userId);
 

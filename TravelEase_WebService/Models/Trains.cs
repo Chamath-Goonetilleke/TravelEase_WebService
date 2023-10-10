@@ -38,4 +38,4 @@ namespace TravelEase_WebService.Models
 }
 
 
-//status(0-ACTIVE, 1-INACTIVE)
+//status(0-CANCLED, 1-PUBLISHED)

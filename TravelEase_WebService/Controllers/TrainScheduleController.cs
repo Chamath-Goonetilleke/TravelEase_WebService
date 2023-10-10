@@ -15,7 +15,9 @@ namespace TravelEase_WebService.Controllers
             _iTrainScheduler = iTrainScheduler;
 
         }
-        [HttpPost("/new-schedule")]
+
+        [Route("new-schedule")]
+        [HttpPost]
         public async Task<ActionResult<TrainSchedule>> PostTrain(TrainSchedule train)
         {
             var insertedTrainSchedule = await _iTrainScheduler.InsertTrainSchedule(train);
@@ -23,7 +25,8 @@ namespace TravelEase_WebService.Controllers
         }
 
         
-        [HttpGet("/schedules")]
+        [Route("schedules")]
+        [HttpGet]
         public async Task<List<TrainSchedule>> GetAllTrainSchedule()
         {
             // Log a message to the console.
@@ -34,6 +37,32 @@ namespace TravelEase_WebService.Controllers
 
             // Return the train.
             return train;
+        }
+        [Route("schedule/{trainId}")]
+        [HttpGet]
+        public async Task<TrainSchedule> GetTrain(int trainId)
+        {
+            var train = await _iTrainScheduler.GetTrainsScheduleById(trainId);
+
+            // Return the train.
+            return train;
+        }
+
+        [Route("train-status/{trainId}")]
+        [HttpGet]
+        public async Task<ActionResult> UpdatetrainStatus(int trainId)
+        {
+            await _iTrainScheduler.UpdatetrainStatus(trainId);
+
+            // Return the train.
+            return Ok("");
+        }
+
+        [Route("update-schedule/{id}")]
+        [HttpPost]
+        public async Task UpdateSchedule(string id, TrainSchedule schedule)
+        {
+            await _iTrainScheduler.UpdateTrainSchedule(id, schedule);
         }
 
     }

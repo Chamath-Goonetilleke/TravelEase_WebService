@@ -11,5 +11,6 @@ namespace TravelEase_WebService.Data
         public string TravelAgentCollectionName { get; set; } = string.Empty;
         public string TravelerCollectionName { get; set; } = string.Empty;
         public string TravelerAccountRequestCollectionName { get; set; } = string.Empty;
+        public string ReservationCollection { get; set; } = string.Empty;
     }
 }

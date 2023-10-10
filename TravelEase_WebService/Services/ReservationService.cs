@@ -11,6 +11,7 @@ namespace TravelEase_WebService.Services
 	{
         private readonly IMongoCollection<Trains> _trainCollection;
         private readonly IMongoCollection<TrainSchedule> _trainScheduleCollection;
+        private readonly IMongoCollection<Reservation> _reservationCollection;
 
         public ReservationService(IOptions<DatabaseSettings> dbSetting)
         {
@@ -19,6 +20,7 @@ namespace TravelEase_WebService.Services
 
             _trainCollection = mongoDatabase.GetCollection<Trains>(dbSetting.Value.TrainCollectionName);
             _trainScheduleCollection = mongoDatabase.GetCollection<TrainSchedule>(dbSetting.Value.TrainScheduleCollectionName);
+            _reservationCollection = mongoDatabase.GetCollection<Reservation>(dbSetting.Value.ReservationCollection);
         }
 
         public async Task<List<ScheduleCheckerDTO>> GetTrainsSchedules()
@@ -43,6 +45,11 @@ namespace TravelEase_WebService.Services
                 scheduleList.Add(scheduleChecker);
             }
             return scheduleList;
+        }
+
+        public async Task CreateNewReservation(Reservation reservation)
+        {
+            await _reservationCollection.InsertOneAsync(reservation);
         }
 
     }

@@ -43,8 +43,8 @@ builder.Services.AddCors(options =>
     });
 });
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
-//builder.Services.AddRazorPages();
+builder.Services.AddSwaggerGen();
+builder.Services.AddRazorPages();
 builder.Services.AddScoped<ITrainService, TrainService>();
 builder.Services.AddScoped<ITrainScheduleService, TrainScheduleService>();
 builder.Services.AddScoped<UserService>();
@@ -57,12 +57,12 @@ var app = builder.Build();
 
 
 
-////app.MapGet("/", () => "Hello World");
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
+//app.MapGet("/", () => "Hello World");
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseAuthentication();
 app.MapControllers();

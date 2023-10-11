@@ -34,8 +34,11 @@ namespace TravelEase_WebService.Models
         [BsonElement("Train")]
         public Trains? Train { get; set; }
 
-        [BsonElement("Status")]
-        public int? Status { get; set; }
+        [BsonElement("IsPublished")]
+        public bool? IsPublished { get; set; }
+
+        [BsonElement("IsCancled")]
+        public bool? IsCancled { get; set; }
     }
 
     public class TrainStation

@@ -20,7 +20,7 @@ namespace TravelEase_WebService.Models
         public List<TrainClass>? Classes { get; set; }
 
         [BsonElement("Status")]
-        public int? Status { get; set; }
+        public bool? Status { get; set; }
 
     }
 

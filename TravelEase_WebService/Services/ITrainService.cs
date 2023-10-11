@@ -8,7 +8,7 @@ namespace TravelEase_WebService.Services
         Task<List<Trains>> GetAllTrains();
         Task<Trains> GetTrainsById(string id);
         Task<Trains> InsertTrain(Trains train);
-
+        Task<bool> UpdateTrainStatus(string id, bool status);
     }
 }
 

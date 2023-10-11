@@ -65,6 +65,48 @@ namespace TravelEase_WebService.Controllers
             await _iTrainScheduler.UpdateTrainSchedule(id, schedule);
         }
 
+        [Route("update-schedule-status/{id}/{status}")]
+        [HttpPatch]
+        public async Task<IActionResult> UpdateScheduleStatus(string id, bool status)
+        {
+            // Log a message to the console.
+            Console.WriteLine($"Getting train with ID");
+
+            // Get the train from the database.
+            var updated = await _iTrainScheduler.UpdateScheduleStatus(id, status);
+
+            // Return the update status
+            if (updated)
+            {
+                return Ok("Status updated successfully");
+            }
+            else
+            {
+                return NotFound("Train not found");
+            }
+        }
+
+        [Route("update-resevation-status/{id}/{status}")]
+        [HttpPatch]
+        public async Task<IActionResult> UpdateReservationByScheduleNo(string id, bool status)
+        {
+            // Log a message to the console.
+            Console.WriteLine($"Getting train with ID");
+
+            // Get the train from the database.
+            var updated = await _iTrainScheduler.UpdateReservationsByScheduleNoAsync(id, status);
+
+            // Return the update status
+            if (updated)
+            {
+                return Ok("Status updated successfully");
+            }
+            else
+            {
+                return NotFound("Train not found");
+            }
+        }
+
     }
 }
 

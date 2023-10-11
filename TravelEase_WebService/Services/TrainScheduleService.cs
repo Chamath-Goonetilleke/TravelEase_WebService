@@ -11,12 +11,14 @@ namespace TravelEase_WebService.Services
 	public class TrainScheduleService: ITrainScheduleService
     {
         private readonly IMongoCollection<TrainSchedule> _trainCollection;
+        private readonly IMongoCollection<Reservation> _reservationCollection;
         public TrainScheduleService(IOptions<DatabaseSettings> dbSetting)
         {
             var mongoClient = new MongoClient(dbSetting.Value.ConnectionString);
             var mongoDatabase = mongoClient.GetDatabase(dbSetting.Value.DatabaseName);
 
             _trainCollection = mongoDatabase.GetCollection<TrainSchedule>(dbSetting.Value.TrainScheduleCollectionName);
+            _reservationCollection = mongoDatabase.GetCollection<Reservation>(dbSetting.Value.ReservationCollection);
         }
 
         public async Task<List<TrainSchedule>> GetAllTrainSchedule()
@@ -50,7 +52,8 @@ namespace TravelEase_WebService.Services
                 .Set(s => s.EndTime, schedule.EndTime)
                 .Set(s => s.Stations, schedule.Stations)
                 .Set(s => s.Train, schedule.Train)
-                .Set(s => s.Status, schedule.Status);
+                .Set(s => s.IsPublished, schedule.IsPublished)
+                .Set(s => s.IsCancled, schedule.IsCancled);
             Console.WriteLine($"update value: {update}");
 
             await _trainCollection.UpdateOneAsync(filter, update);
@@ -63,6 +66,45 @@ namespace TravelEase_WebService.Services
             //return trainSchedule;
             return null;
 
+        }
+
+        public async Task<bool> UpdateScheduleStatus(string id, bool status)
+        {
+            var objectId = new ObjectId(id);
+            var filter = Builders<TrainSchedule>.Filter.Eq("_id", objectId);
+            var update = Builders<TrainSchedule>.Update.Set("IsPublished", status);
+
+            var updateResult = await _trainCollection.UpdateOneAsync(filter, update);
+
+            return updateResult.ModifiedCount > 0;
+        }
+
+
+        public async Task<bool> UpdateReservationsByScheduleNoAsync(string scheduleId, bool status)
+        {
+            var filter = Builders<Reservation>.Filter.Eq("ScheduleId", scheduleId);
+            var count = _reservationCollection.CountDocuments(filter);
+            Console.WriteLine("update reseation is get count" + count);
+            //return (int)count;
+
+            if (count > 0)
+            {
+                Console.WriteLine("called1");
+                var objectId = new ObjectId(scheduleId);
+                var filter1 = Builders<TrainSchedule>.Filter.Eq("_id", objectId);
+                var update = Builders<TrainSchedule>.Update.Set("IsCancled", status);
+
+                var updateResult = await _trainCollection.UpdateOneAsync(filter1, update);
+
+                return updateResult.ModifiedCount > 0;
+            }
+            else
+            {
+                Console.WriteLine("called2");
+                return false;
+
+            }
+            
         }
     }
 }

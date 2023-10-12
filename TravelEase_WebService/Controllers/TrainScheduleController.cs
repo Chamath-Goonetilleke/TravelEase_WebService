@@ -65,15 +65,15 @@ namespace TravelEase_WebService.Controllers
             await _iTrainScheduler.UpdateTrainSchedule(id, schedule);
         }
 
-        [Route("update-schedule-status/{id}/{status}")]
+        [Route("update-schedule-status/{id}/{isPublished}")]
         [HttpPatch]
-        public async Task<IActionResult> UpdateScheduleStatus(string id, bool status)
+        public async Task<IActionResult> UpdateScheduleStatus(string id, bool isPublished)
         {
             // Log a message to the console.
             Console.WriteLine($"Getting train with ID");
 
             // Get the train from the database.
-            var updated = await _iTrainScheduler.UpdateScheduleStatus(id, status);
+            var updated = await _iTrainScheduler.UpdateScheduleStatus(id, isPublished);
 
             // Return the update status
             if (updated)
@@ -86,15 +86,76 @@ namespace TravelEase_WebService.Controllers
             }
         }
 
-        [Route("update-resevation-status/{id}/{status}")]
+        [Route("update-resevation-status/{id}/{IsCancled}")]
         [HttpPatch]
-        public async Task<IActionResult> UpdateReservationByScheduleNo(string id, bool status)
+        public async Task<IActionResult> UpdateReservationBySchedule(string id, bool IsCancled)
         {
             // Log a message to the console.
             Console.WriteLine($"Getting train with ID");
 
             // Get the train from the database.
-            var updated = await _iTrainScheduler.UpdateReservationsByScheduleNoAsync(id, status);
+            var updated = await _iTrainScheduler.UpdateReservationsBySchedule(id, IsCancled);
+
+            // Return the update status
+            if (updated)
+            {
+                return Ok("Status updated successfully");
+            }
+            else
+            {
+                return NotFound("Train not found");
+            }
+        }
+        [Route("update-train-status/{id}/{status}")]
+        [HttpPatch]
+        public async Task<IActionResult> UpdateTrainStatus(string id, bool status)
+        {
+            // Log a message to the console.
+            Console.WriteLine($"Getting train with ID");
+
+            // Get the train from the database.
+            var updated = await _iTrainScheduler.UpdateTrainStatus(id, status);
+
+            // Return the update status
+            if (updated)
+            {
+                return Ok("Status updated successfully");
+            }
+            else
+            {
+                return NotFound("Train not found");
+            }
+        }
+
+        [Route("update-schedules-status/{id}/{IsPublished}")]
+        [HttpPatch]
+        public async Task<IActionResult> UpdateschedulesStatus(string id, bool IsPublished)
+        {
+            // Log a message to the console.
+            Console.WriteLine($"Getting train with ID");
+
+            // Get the train from the database.
+            var updated = await _iTrainScheduler.UpdatesOurchedulesStatus(id, IsPublished);
+
+            // Return the update status
+            if (updated)
+            {
+                return Ok("Status updated successfully");
+            }
+            else
+            {
+                return NotFound("Train not found");
+            }
+        }
+        [Route("update-schedules-status-cancled/{id}/{IsCancled}")]
+        [HttpPatch]
+        public async Task<IActionResult> UpdateschedulesIsCancledStatus(string id, bool IsCancled)
+        {
+            // Log a message to the console.
+            Console.WriteLine($"Getting train with ID");
+
+            // Get the train from the database.
+            var updated = await _iTrainScheduler.UpdatesOurchedulesIsCancledStatus(id, IsCancled);
 
             // Return the update status
             if (updated)

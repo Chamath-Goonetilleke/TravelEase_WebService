@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Net.NetworkInformation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using TravelEase_WebService.Data;
+using TravelEase_WebService.DTO;
 using TravelEase_WebService.Models;
 
 namespace TravelEase_WebService.Services
@@ -12,6 +14,7 @@ namespace TravelEase_WebService.Services
     {
         private readonly IMongoCollection<TrainSchedule> _trainCollection;
         private readonly IMongoCollection<Reservation> _reservationCollection;
+        private readonly IMongoCollection<Trains> _trainNewCollection;
         public TrainScheduleService(IOptions<DatabaseSettings> dbSetting)
         {
             var mongoClient = new MongoClient(dbSetting.Value.ConnectionString);
@@ -19,6 +22,7 @@ namespace TravelEase_WebService.Services
 
             _trainCollection = mongoDatabase.GetCollection<TrainSchedule>(dbSetting.Value.TrainScheduleCollectionName);
             _reservationCollection = mongoDatabase.GetCollection<Reservation>(dbSetting.Value.ReservationCollection);
+            _trainNewCollection = mongoDatabase.GetCollection<Trains>(dbSetting.Value.TrainCollectionName);
         }
 
         public async Task<List<TrainSchedule>> GetAllTrainSchedule()
@@ -68,11 +72,14 @@ namespace TravelEase_WebService.Services
 
         }
 
-        public async Task<bool> UpdateScheduleStatus(string id, bool status)
+        public async Task<bool> UpdateScheduleStatus(string id, bool isPublished)
         {
             var objectId = new ObjectId(id);
             var filter = Builders<TrainSchedule>.Filter.Eq("_id", objectId);
-            var update = Builders<TrainSchedule>.Update.Set("IsPublished", status);
+            Console.WriteLine(filter);
+            var update = Builders<TrainSchedule>.Update.Set("IsPublished", isPublished);
+            
+            Console.WriteLine(update);
 
             var updateResult = await _trainCollection.UpdateOneAsync(filter, update);
 
@@ -80,21 +87,22 @@ namespace TravelEase_WebService.Services
         }
 
 
-        public async Task<bool> UpdateReservationsByScheduleNoAsync(string scheduleId, bool status)
+        public async Task<bool> UpdateReservationsBySchedule(string id, bool IsCancled)
         {
-            var filter = Builders<Reservation>.Filter.Eq("ScheduleId", scheduleId);
-            var count = _reservationCollection.CountDocuments(filter);
+            var ScheduleId = id;
+            var filter1 = Builders<Reservation>.Filter.Eq("ScheduleId", ScheduleId);
+            var count = _reservationCollection.CountDocuments(filter1);
             Console.WriteLine("update reseation is get count" + count);
             //return (int)count;
 
             if (count > 0)
             {
                 Console.WriteLine("called1");
-                var objectId = new ObjectId(scheduleId);
-                var filter1 = Builders<TrainSchedule>.Filter.Eq("_id", objectId);
-                var update = Builders<TrainSchedule>.Update.Set("IsCancled", status);
+                var objectId = new ObjectId(id);
+                var filter = Builders<TrainSchedule>.Filter.Eq("_id", objectId);
+                var update = Builders<TrainSchedule>.Update.Set("IsCancled", IsCancled);
 
-                var updateResult = await _trainCollection.UpdateOneAsync(filter1, update);
+                var updateResult = await _trainCollection.UpdateOneAsync(filter, update);
 
                 return updateResult.ModifiedCount > 0;
             }
@@ -104,6 +112,100 @@ namespace TravelEase_WebService.Services
                 return false;
 
             }
+            
+        }
+
+        public async Task<bool> UpdateTrainStatus(string id, bool status)
+        {
+            var objectId = new ObjectId(id);
+            var filter = Builders<Trains>.Filter.Eq("_id", objectId);
+            var update = Builders<Trains>.Update.Set("Status", status);
+
+            var updateResult = await _trainNewCollection.UpdateOneAsync(filter, update);
+
+            return updateResult.ModifiedCount > 0;
+        }
+
+        public async Task<bool> UpdateExcistingTrainsStatus(string id, bool status)
+        {
+            var objectId = new ObjectId(id);
+            var filter = Builders<Trains>.Filter.Eq("_id", objectId);
+            var update = Builders<Trains>.Update.Set("Status", status);
+
+            var updateResult = await _trainNewCollection.UpdateOneAsync(filter, update);
+
+            return updateResult.ModifiedCount > 0;
+        }
+
+        Task<bool> ITrainScheduleService.UpdateschedulesStatus(string id, bool isPublished)
+        {
+            throw new NotImplementedException();
+        }
+
+        async Task<bool> ITrainScheduleService.UpdatesOurchedulesStatus(string id, bool isPublished)
+        {
+            var filter = Builders<TrainSchedule>.Filter.Eq(x => x.Id, id);
+            var trainSchedule = await _trainCollection.Find(filter).FirstOrDefaultAsync();
+            Console.WriteLine("trainSchedule" + trainSchedule.IsPublished);
+            trainSchedule.IsPublished = isPublished;
+            Console.WriteLine("trainSchedule2" + trainSchedule.IsPublished);
+
+            var update = Builders<TrainSchedule>.Update
+                .Set(s => s.TrainNo, trainSchedule.TrainNo)
+                .Set(s => s.WeekType, trainSchedule.WeekType)
+                .Set(s => s.StartStation, trainSchedule.StartStation)
+                .Set(s => s.StartTime, trainSchedule.StartTime)
+                .Set(s => s.EndStation, trainSchedule.EndStation)
+                .Set(s => s.EndTime, trainSchedule.EndTime)
+                .Set(s => s.Stations, trainSchedule.Stations)
+                .Set(s => s.Train, trainSchedule.Train)
+                .Set(s => s.IsPublished, trainSchedule.IsPublished)
+                .Set(s => s.IsCancled, trainSchedule.IsCancled);
+            Console.WriteLine($"update value: {update}");
+
+            var updateResult = await _trainCollection.UpdateOneAsync(filter, update);
+            return true;
+        }
+        async Task<bool> ITrainScheduleService.UpdatesOurchedulesIsCancledStatus(string id, bool IsCancled)
+        {
+            var filter = Builders<TrainSchedule>.Filter.Eq(x => x.Id, id);
+            var trainSchedule = await _trainCollection.Find(filter).FirstOrDefaultAsync();
+            Console.WriteLine("trainSchedule" + trainSchedule.IsPublished);
+            trainSchedule.IsCancled = IsCancled;
+            Console.WriteLine("trainSchedule2" + trainSchedule.IsPublished);
+
+            var ScheduleId = id;
+            var filter1 = Builders<Reservation>.Filter.Eq("ScheduleId", ScheduleId);
+            var count = _reservationCollection.CountDocuments(filter1);
+            Console.WriteLine("update reseation is get count" + count);
+            //return (int)count;
+
+            if (count > 0)
+            {
+                var update = Builders<TrainSchedule>.Update
+                .Set(s => s.TrainNo, trainSchedule.TrainNo)
+                .Set(s => s.WeekType, trainSchedule.WeekType)
+                .Set(s => s.StartStation, trainSchedule.StartStation)
+                .Set(s => s.StartTime, trainSchedule.StartTime)
+                .Set(s => s.EndStation, trainSchedule.EndStation)
+                .Set(s => s.EndTime, trainSchedule.EndTime)
+                .Set(s => s.Stations, trainSchedule.Stations)
+                .Set(s => s.Train, trainSchedule.Train)
+                .Set(s => s.IsPublished, trainSchedule.IsPublished)
+                .Set(s => s.IsCancled, trainSchedule.IsCancled);
+                Console.WriteLine($"update value: {update}");
+
+                var updateResult = await _trainCollection.UpdateOneAsync(filter, update);
+
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("called2");
+                return false;
+
+            }
+
             
         }
     }

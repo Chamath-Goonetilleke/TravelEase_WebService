@@ -20,6 +20,23 @@ namespace TravelEase_WebService.Controllers
             _requestService = requestService;
         }
 
+        [Route("auth")]
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<ActionResult> TravelerAuth(AuthUserDTO authUserDTO)
+        {
+            try
+            {
+                var traveler = await _travelerService.TravelerAuth(authUserDTO);
+                return Ok(traveler);
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Error : " + e.Message);
+            }
+        }
+
+
         [Route("register")]
         [AllowAnonymous]
         [HttpPost]
@@ -38,7 +55,9 @@ namespace TravelEase_WebService.Controllers
 
                 await _requestService.CreateNewRequest(request);
 
-                return Ok("Successfully Created.");
+
+
+                return Ok(new Message() { Res="Created Successfully"});
             }
             catch (Exception e)
             {
@@ -103,6 +122,7 @@ namespace TravelEase_WebService.Controllers
             try
             {
                 await _travelerService.ActivateTravelerAccount(nic);
+                await _requestService.DeleteRequest(nic);
                 return Ok("Successfully Activated");
             }
             catch (Exception e)

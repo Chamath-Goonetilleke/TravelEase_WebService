@@ -1,6 +1,10 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using TravelEase_WebService.Data;
 using TravelEase_WebService.DTO;
@@ -13,6 +17,7 @@ namespace TravelEase_WebService.Services
 	{
         private readonly IMongoCollection<Traveler> _travelerCollection;
         private readonly PasswordEncryptionUtil _passwordEncryptionUtil;
+        private readonly IConfiguration _configuration;
 
         public TravelerService(IOptions<DatabaseSettings> options, IConfiguration configuration, PasswordEncryptionUtil passwordEncryptionUtil)
         {
@@ -21,8 +26,44 @@ namespace TravelEase_WebService.Services
 
             _travelerCollection = mongoClient.GetDatabase(options.Value.DatabaseName)
                   .GetCollection<Traveler>(options.Value.TravelerCollectionName);
-
+            _configuration = configuration;
             _passwordEncryptionUtil = passwordEncryptionUtil;
+        }
+
+        public string GenerateJWTToken(string role, string id)
+        {
+            var claims = new[] {
+                        new Claim(JwtRegisteredClaimNames.Sub, _configuration["JwtSettings:Subject"]),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                        new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                        new Claim("UserRole", role),
+                        new Claim("UserID", id),
+
+                    };
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]));
+            var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(
+                _configuration["JwtSettings:Issuer"],
+                _configuration["JwtSettings:Audience"],
+                claims,
+                expires: DateTime.UtcNow.AddMinutes(60),
+                signingCredentials: signIn);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task<TravelerDTO> TravelerAuth(AuthUserDTO authUserDTO)
+        {
+            var traveler = await _travelerCollection.Find(t => t.Email == authUserDTO.Email).FirstOrDefaultAsync()
+                ?? throw new Exception("No user found with the provided email.");
+
+            if (!_passwordEncryptionUtil.VerifyPassword(authUserDTO.Password, traveler.Password))
+            {
+                throw new Exception("Wrong password.");
+            }
+            TravelerDTO traveler1 = new();
+            traveler1.MapTraveler(traveler, GenerateJWTToken(traveler.Role,traveler.Id));
+            return traveler1;
         }
 
         public async Task CreateNewTraveler(UserDTO userDTO)
@@ -104,6 +145,8 @@ namespace TravelEase_WebService.Services
             var filter = Builders<Traveler>.Filter.Eq(u => u.Nic, nic);
             var update = Builders<Traveler>.Update
                 .Set(t => t.State, Traveler.TravelerAccountState.ACTIVE);
+
+
 
             await _travelerCollection.UpdateOneAsync(filter, update);
         }

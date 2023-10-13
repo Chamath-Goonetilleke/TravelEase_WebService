@@ -34,6 +34,13 @@ namespace TravelEase_WebService.Services
             await _requestCollection.InsertOneAsync(request);
         }
 
+        public async Task DeleteRequest(string nic)
+        {
+            var req = await _requestCollection.Find(r => r.TravelerNIC == nic).FirstOrDefaultAsync()
+                ?? throw new Exception("No Req Found.");
+            await _requestCollection.DeleteOneAsync(r => r.TravelerNIC == nic);
+        }
+
         public async Task<List<TravelerAccountRequest>> GetAllRequests()
         {
             return await _requestCollection.Find(r => true).ToListAsync();

@@ -98,13 +98,14 @@ namespace TravelEase_WebService.Controllers
         // Method: GetReservationByTravelAgent
         // Purpose: Gets reservations by travel agent ID.
         //------------------------------------------------------------------------------
-        [Route("reservationByTravelAgent/{agentId}")]
+        [Route("reservationByTravelAgent")]
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult> GetReservationByTravelAgent(string agentId)
+        public async Task<ActionResult> GetReservationByTravelAgent()
         {
             try
             {
+                var agentId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
                 var reservationList = await _reservationService.GetReservationByTravelAgent(agentId);
                 return Ok(reservationList);
             }

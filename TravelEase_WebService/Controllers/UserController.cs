@@ -1,3 +1,13 @@
+/*
+------------------------------------------------------------------------------
+ File: UserController.cs
+ Purpose: This file contains the UserController class, which is a controller
+ for handling user-related operations in the TravelEase_WebService project.
+ Author: IT20122096
+ Date: 2023-10-13
+------------------------------------------------------------------------------
+*/
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TravelEase_WebService.DTO;
@@ -5,19 +15,21 @@ using TravelEase_WebService.Services;
 
 namespace TravelEase_WebService.Controllers
 {
-
     [ApiController]
     [Route("/api/v1/user")]
     public class UserController : ControllerBase
     {
+        private readonly IUserService userService;
 
-        private readonly UserService userService;
-
-        public UserController(UserService userService)
+        public UserController(IUserService userService)
         {
             this.userService = userService;
         }
 
+        //------------------------------------------------------------------------------
+        // Method: Auth
+        // Purpose: Authenticates a user and sets a token cookie upon successful login.
+        //------------------------------------------------------------------------------
         [Route("auth")]
         [AllowAnonymous]
         [HttpPost]
@@ -42,6 +54,10 @@ namespace TravelEase_WebService.Controllers
             }
         }
 
+        //------------------------------------------------------------------------------
+        // Method: CreateNewUser
+        // Purpose: Registers a new user.
+        //------------------------------------------------------------------------------
         [Route("register")]
         [AllowAnonymous]
         [HttpPost]
@@ -59,6 +75,10 @@ namespace TravelEase_WebService.Controllers
             }
         }
 
+        //------------------------------------------------------------------------------
+        // Method: UpdateUser
+        // Purpose: Updates user information.
+        //------------------------------------------------------------------------------
         [Route("update")]
         [Authorize]
         [HttpPut]
@@ -78,6 +98,10 @@ namespace TravelEase_WebService.Controllers
             }
         }
 
+        //------------------------------------------------------------------------------
+        // Method: GetCurrentUser
+        // Purpose: Retrieves the profile of the currently authenticated user.
+        //------------------------------------------------------------------------------
         [Route("profile")]
         [Authorize]
         [HttpGet]

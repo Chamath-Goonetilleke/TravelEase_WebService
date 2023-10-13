@@ -1,7 +1,14 @@
-﻿using System;
+﻿/*
+------------------------------------------------------------------------------
+ File: TravelerService.cs
+ Purpose: This file contains the TravelerService class, which is responsible
+ for handling traveler-related operations in the TravelEase_WebService project.
+ Author: IT20122096
+ Date: 2023-10-13
+------------------------------------------------------------------------------
+*/
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -13,8 +20,8 @@ using TravelEase_WebService.Utils;
 
 namespace TravelEase_WebService.Services
 {
-	public class TravelerService
-	{
+    public class TravelerService : ITravelerService
+    {
         private readonly IMongoCollection<Traveler> _travelerCollection;
         private readonly PasswordEncryptionUtil _passwordEncryptionUtil;
         private readonly IConfiguration _configuration;
@@ -30,6 +37,10 @@ namespace TravelEase_WebService.Services
             _passwordEncryptionUtil = passwordEncryptionUtil;
         }
 
+        //------------------------------------------------------------------------------
+        // Method: GenerateJWTToken
+        // Purpose: Generates a JWT token for authentication.
+        //------------------------------------------------------------------------------
         public string GenerateJWTToken(string role, string id)
         {
             var claims = new[] {
@@ -52,6 +63,10 @@ namespace TravelEase_WebService.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        //------------------------------------------------------------------------------
+        // Method: TravelerAuth
+        // Purpose: Authenticates a traveler.
+        //------------------------------------------------------------------------------
         public async Task<TravelerDTO> TravelerAuth(AuthUserDTO authUserDTO)
         {
             var traveler = await _travelerCollection.Find(t => t.Email == authUserDTO.Email).FirstOrDefaultAsync()
@@ -62,21 +77,26 @@ namespace TravelEase_WebService.Services
                 throw new Exception("Wrong password.");
             }
             TravelerDTO traveler1 = new();
-            traveler1.MapTraveler(traveler, GenerateJWTToken(traveler.Role,traveler.Id));
+            traveler1.MapTraveler(traveler, GenerateJWTToken(traveler.Role, traveler.Id));
             return traveler1;
         }
 
+        //------------------------------------------------------------------------------
+        // Method: CreateNewTraveler
+        // Purpose: Creates a new traveler account.
+        //------------------------------------------------------------------------------
         public async Task CreateNewTraveler(UserDTO userDTO)
         {
             var traveler = await _travelerCollection.Find(t => t.Email == userDTO.Email
                                      || t.Nic == userDTO.Nic).FirstOrDefaultAsync();
-            if(traveler != null)
+            if (traveler != null)
             {
                 throw new Exception("User already registered.");
 
             }
 
-            Traveler newTravelr = new() {
+            Traveler newTravelr = new()
+            {
                 Role = userDTO.Role,
                 Title = userDTO.Title,
                 FirstName = userDTO.FirstName,
@@ -88,27 +108,35 @@ namespace TravelEase_WebService.Services
                 ImageUrl = userDTO.ImageUrl,
                 City = userDTO.City,
                 State = Traveler.TravelerAccountState.INACTIVE
-                
+
             };
 
             await _travelerCollection.InsertOneAsync(newTravelr);
 
         }
 
+        //------------------------------------------------------------------------------
+        // Method: GetAllTravelers
+        // Purpose: Retrieves a list of all travelers.
+        //------------------------------------------------------------------------------
         public async Task<List<CurrentUserDTO>> GetAllTravelers()
         {
-            var travelers =  await _travelerCollection.Find(t => t.Role == "Traveler").ToListAsync();
+            var travelers = await _travelerCollection.Find(t => t.Role == "Traveler").ToListAsync();
             var travelersList = new List<CurrentUserDTO>();
             foreach (var traveler in travelers)
             {
                 var t1 = new CurrentUserDTO();
-                t1.MapUser(traveler, "Traveler",null,traveler.City, traveler.State);
+                t1.MapUser(traveler, "Traveler", null, traveler.City, traveler.State);
                 travelersList.Add(t1);
             }
 
             return travelersList;
         }
 
+        //------------------------------------------------------------------------------
+        // Method: GetTravelerByNIC
+        // Purpose: Retrieves traveler information by NIC.
+        //------------------------------------------------------------------------------
         public async Task<CurrentUserDTO> GetTravelerByNIC(string nic)
         {
             var traveler = await _travelerCollection.Find(t => t.Nic == nic).
@@ -120,6 +148,10 @@ namespace TravelEase_WebService.Services
             return t1;
         }
 
+        //------------------------------------------------------------------------------
+        // Method: UpdateTraveler
+        // Purpose: Updates traveler information.
+        //------------------------------------------------------------------------------
         public async Task UpdateTraveler(UserDTO userDTO)
         {
             var traveler = await _travelerCollection.Find(t => t.Nic == userDTO.Nic).
@@ -137,6 +169,10 @@ namespace TravelEase_WebService.Services
             await _travelerCollection.UpdateOneAsync(filter, update);
         }
 
+        //------------------------------------------------------------------------------
+        // Method: ActivateTravelerAccount
+        // Purpose: Activates a traveler account by NIC.
+        //------------------------------------------------------------------------------
         public async Task ActivateTravelerAccount(string nic)
         {
             var traveler = await _travelerCollection.Find(t => t.Nic == nic).
@@ -151,6 +187,10 @@ namespace TravelEase_WebService.Services
             await _travelerCollection.UpdateOneAsync(filter, update);
         }
 
+        //------------------------------------------------------------------------------
+        // Method: DeactivateTravelerAccount
+        // Purpose: Deactivates a traveler account by NIC.
+        //------------------------------------------------------------------------------
         public async Task DeactivateTravelerAccount(string nic)
         {
             var traveler = await _travelerCollection.Find(t => t.Nic == nic).
@@ -163,8 +203,10 @@ namespace TravelEase_WebService.Services
             await _travelerCollection.UpdateOneAsync(filter, update);
         }
 
-
-
+        //------------------------------------------------------------------------------
+        // Method: DeleteTraveler
+        // Purpose: Deletes a traveler account by NIC.
+        //------------------------------------------------------------------------------
         public async Task DeleteTraveler(string nic)
         {
             var traveler = await _travelerCollection.Find(t => t.Nic == nic).

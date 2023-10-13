@@ -1,16 +1,27 @@
-﻿using TravelEase_WebService.Data;
+﻿/*
+------------------------------------------------------------------------------
+ File: Program.cs
+ Purpose: This file contains the program entry point and configuration setup
+ for the TravelEase_WebService project.
+ Author: IT20122096
+ Date: 2023-10-13
+------------------------------------------------------------------------------
+*/
+using TravelEase_WebService.Data;
 using TravelEase_WebService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using TravelEase_WebService.Models;
 using TravelEase_WebService.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
+// Configure database settings
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
 builder.Services.AddControllers();
+
+// Configure authentication and authorization
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -31,6 +42,7 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
+// Configure CORS
 var myOrigins = "_myOrigins";
 builder.Services.AddCors(options =>
 {
@@ -45,19 +57,19 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddRazorPages();
+
+// Register services and dependencies
 builder.Services.AddScoped<ITrainService, TrainService>();
 builder.Services.AddScoped<ITrainScheduleService, TrainScheduleService>();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<TravelerService>();
+builder.Services.AddScoped<IUserService,UserService>();
+builder.Services.AddScoped<ITravelerService,TravelerService>();
+builder.Services.AddScoped<ITravelerAccountRequestService,TravelerAccountRequestService>(); 
+builder.Services.AddScoped<IReservationService,ReservationService>();
 builder.Services.AddScoped<PasswordEncryptionUtil>();
-builder.Services.AddScoped<TravelerAccountRequestService>(); 
-builder.Services.AddScoped<ReservationService>();
 
 var app = builder.Build();
 
 
-
-//app.MapGet("/", () => "Hello World");
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

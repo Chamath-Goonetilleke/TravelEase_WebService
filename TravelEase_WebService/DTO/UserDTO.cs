@@ -1,8 +1,17 @@
-﻿using System;
+﻿/*
+------------------------------------------------------------------------------
+ File: UserDTO.cs
+ Purpose: This file contains the UserDTO class, which defines a data transfer
+ object for representing user details in the TravelEase_WebService project.
+ Author: IT20122096
+ Date: 2023-10-13
+------------------------------------------------------------------------------
+*/
+
 namespace TravelEase_WebService.DTO
 {
-	public class UserDTO
-	{
+    public class UserDTO
+    {
         public string? Role { get; set; }
         public string? Title { get; set; }
         public string? FirstName { get; set; }
@@ -15,7 +24,5 @@ namespace TravelEase_WebService.DTO
         public string? EmployeeId { get; set; }
         public string? TravelAgentId { get; set; }
         public string? City { get; set; }
-
     }
 }
-

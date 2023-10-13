@@ -1,4 +1,13 @@
-﻿using Microsoft.Extensions.Options;
+﻿/*
+------------------------------------------------------------------------------
+ File: UserService.cs
+ Purpose: This file contains the UserService class, which is responsible
+ for handling user-related operations in the TravelEase_WebService project.
+ Author: IT20122096
+ Date: 2023-10-13
+------------------------------------------------------------------------------
+*/
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using TravelEase_WebService.Models;
 using TravelEase_WebService.Data;
@@ -11,7 +20,7 @@ using TravelEase_WebService.Utils;
 
 namespace TravelEase_WebService.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly IMongoCollection<BackOfficeUser> _bouCollection;
         private readonly IMongoCollection<TravelAgent> _travelAgentCollection;
@@ -31,10 +40,12 @@ namespace TravelEase_WebService.Services
                   .GetCollection<TravelAgent>(options.Value.TravelAgentCollectionName);
 
             _passwordEncryptionUtil = passwordEncryptionUtil;
-
-
         }
 
+        //------------------------------------------------------------------------------
+        // Method: GenerateJWTToken
+        // Purpose: Generates a JWT token for authentication.
+        //------------------------------------------------------------------------------
         public string GenerateJWTToken(string role, string id)
         {
             var claims = new[] {
@@ -57,6 +68,10 @@ namespace TravelEase_WebService.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        //------------------------------------------------------------------------------
+        // Method: Auth
+        // Purpose: Authenticates a user.
+        //------------------------------------------------------------------------------
         public async Task<string> Auth(AuthUserDTO authUser)
         {
             var userRole = authUser.Role;
@@ -88,7 +103,10 @@ namespace TravelEase_WebService.Services
             throw new Exception("In Valid User Role");
         }
 
-
+        //------------------------------------------------------------------------------
+        // Method: CreateUser
+        // Purpose: Creates a new user account.
+        //------------------------------------------------------------------------------
         public async Task CreateUser(UserDTO userDTO)
         {
             var userRole = userDTO.Role ?? throw new Exception("User role cannot be null.");
@@ -146,7 +164,10 @@ namespace TravelEase_WebService.Services
             }
         }
 
-
+        //------------------------------------------------------------------------------
+        // Method: UpdateUser
+        // Purpose: Updates user information.
+        //------------------------------------------------------------------------------
         public async Task UpdateUser(UserDTO userDTO, string uId)
         {
             var userRole = userDTO.Role ?? throw new Exception("User role cannot be null.");
@@ -185,6 +206,10 @@ namespace TravelEase_WebService.Services
             }
         }
 
+        //------------------------------------------------------------------------------
+        // Method: GetCurrentUser
+        // Purpose: Retrieves current user information.
+        //------------------------------------------------------------------------------
         public async Task<CurrentUserDTO> GetCurrentUser(string role, string id)
         {
             var currentUser = new CurrentUserDTO();
@@ -203,8 +228,6 @@ namespace TravelEase_WebService.Services
                     FirstOrDefaultAsync() ?? throw new Exception("No User Found.");
 
                 currentUser.MapUser(user, "BackOfficeUser", user.EmployeeId);
-
-
 
             }
             return currentUser;

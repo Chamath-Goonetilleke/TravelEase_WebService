@@ -1,4 +1,13 @@
-﻿using System;
+﻿/*
+------------------------------------------------------------------------------
+ File: TravelerDTO.cs
+ Purpose: This file contains the TravelerDTO class, which defines a data transfer
+ object for representing traveler details in the TravelEase_WebService project.
+ Author: IT20122096
+ Date: 2023-10-13
+------------------------------------------------------------------------------
+*/
+
 using TravelEase_WebService.Models;
 using static TravelEase_WebService.Models.Traveler;
 
@@ -34,11 +43,6 @@ namespace TravelEase_WebService.DTO
             City = traveler.City;
             State = traveler.State;
             Token = token;
-
         }
-
     }
-
-
 }
-

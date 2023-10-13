@@ -15,6 +15,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
+      "lunchUrl": "swagger",
       "dotnetRunMessages": true
     },
     "IIS Express": {
@@ -22,7 +23,8 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "lunchUrl": "swagger"
     }
   }
 }

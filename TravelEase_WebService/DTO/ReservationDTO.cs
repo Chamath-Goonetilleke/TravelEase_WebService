@@ -1,10 +1,19 @@
-﻿using System;
+﻿/*
+------------------------------------------------------------------------------
+ File: ReservationDTO.cs
+ Purpose: This file contains the ReservationDTO class, which defines a data transfer
+ object for representing reservation details in the TravelEase_WebService project.
+ Author: IT20122096
+ Date: 2023-10-13
+------------------------------------------------------------------------------
+*/
+
 using TravelEase_WebService.Models;
 
 namespace TravelEase_WebService.DTO
 {
-	public class ReservationDTO
-	{
+    public class ReservationDTO
+    {
         public required string TravelerId { get; set; }
         public required string ScheduleId { get; set; }
         public required string From { get; set; }
@@ -24,4 +33,3 @@ namespace TravelEase_WebService.DTO
         public string? TravelAgentId { get; set; }
     }
 }
-

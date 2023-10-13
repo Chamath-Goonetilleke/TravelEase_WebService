@@ -1,3 +1,13 @@
+/*
+------------------------------------------------------------------------------
+ File: DatabaseSettings.cs
+ Purpose: This file contains the DatabaseSettings class, which defines the
+ database connection settings for the TravelEase_WebService project.
+ Author: IT20122096
+ Date: 2023-10-13
+------------------------------------------------------------------------------
+*/
+
 namespace TravelEase_WebService.Data
 {
     public class DatabaseSettings

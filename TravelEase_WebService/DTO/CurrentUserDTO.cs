@@ -1,5 +1,13 @@
-﻿using System;
-using System.Data;
+﻿/*
+------------------------------------------------------------------------------
+ File: CurrentUserDTO.cs
+ Purpose: This file contains the CurrentUserDTO class, which defines a data transfer
+ object for representing the current user's information in the TravelEase_WebService project.
+ Author: IT20122096
+ Date: 2023-10-13
+------------------------------------------------------------------------------
+*/
+
 using static TravelEase_WebService.Models.Traveler;
 
 namespace TravelEase_WebService.DTO
@@ -19,7 +27,6 @@ namespace TravelEase_WebService.DTO
         public string? City { get; set; }
         public TravelerAccountState? State { get; set; }
 
-
         public void MapUser(Models.User user, string role, string? workId = null, string? city = null, TravelerAccountState? state = null)
         {
             Role = user.Role;
@@ -30,7 +37,6 @@ namespace TravelEase_WebService.DTO
             Email = user.Email;
             PhoneNumber = user.PhoneNumber;
             ImageUrl = user.ImageUrl;
-
 
             if (role == "TravelAgent")
             {
@@ -45,15 +51,6 @@ namespace TravelEase_WebService.DTO
                 City = city;
                 State = state;
             }
-
-
-
-
-
         }
-
     }
-
-
 }
-
